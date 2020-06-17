@@ -1,0 +1,29 @@
+---
+ - name: Install apache on webserver
+   apt:  name=apache2 state=latest
+
+ - name: Install php module for apache
+   apt: name=libapache2-mod-php7.2 state=latest
+
+ - name: Install mysql client in the server
+   apt:
+     name: ['mysql-client']
+     state: latest
+     update_cache: yes
+
+ - name: Create custom root directory
+   file: path={{ doc_root }} state=directory owner=www-data group=www-data
+  
+ - name: Copy index file in root directory
+   copy: src=index.html dest={{ doc_root }}/index.html owner=www-data group=www-data mode=0644
+  
+ - name: Move file in virtual host directory
+   template: src=vhost.tpl dest=/etc/apache2/sites-available/000-default.conf
+   notify: restart apache
+
+ - name: Enable modules
+   apache2_module: 
+               name: rewrite
+               state: present
+   tags: module
+   notify: restart apache

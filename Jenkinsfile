@@ -8,8 +8,8 @@ pipeline {
         }
         stage("Release build in production") {
             steps {
-                sshagent(['ansible']) {
-                 sh label: '', script: 'rsync -o stricthostkeychecking=no target/* root@13.57.234.158:/home/phpbuild/'
+                sshagent(['ansibleserver']) {
+                 sh label: '', script: 'rsync -avz --stats target/* root@13.57.234.158:/home/phpbuild/'
                  }
              }
         }
